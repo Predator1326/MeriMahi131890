@@ -5,28 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Photo Slideshow with Music</title>
   <style>
-    * {
+    body {
+      font-family: sans-serif;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-    body, html {
-      height: 100%;
-      font-family: sans-serif;
       background-color: black;
-      overflow: hidden;
     }
 
     #qr-screen, #slideshow {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      width: 100%;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
       background-color: black;
-      z-index: 2;
     }
 
     #qr-screen img {
@@ -45,17 +38,18 @@
 
     #slideshow {
       display: none;
-      z-index: 1;
+      position: relative;
+      overflow: hidden;
     }
 
     .slide {
       position: absolute;
       width: 100%;
       height: 100%;
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
       background-size: cover;
       background-position: center;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
     }
 
     .slide.active {
@@ -76,7 +70,7 @@
   <button onclick="startSlideshow()">Scanned</button>
 </div>
 
-<!-- Slideshow Screen -->
+<!-- Slideshow -->
 <div id="slideshow">
   <div class="slide active" style="background-image: url('p1.jpg');"></div>
   <div class="slide" style="background-image: url('p2.jpg');"></div>
@@ -90,13 +84,14 @@
 </div>
 
 <!-- Music -->
-<audio id="bg-music" loop autoplay>
-  <source src="your-music.mp3" type="audio/mpeg">
+<audio id="bg-music" loop>
+  <source src="Tujhe-Kitna-Chahne-Lage.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
 </audio>
 
 <script>
   const slides = document.querySelectorAll('.slide');
+  const music = document.getElementById('bg-music');
   let current = 0;
 
   function showSlide(index) {
@@ -107,8 +102,12 @@
 
   function startSlideshow() {
     document.getElementById('qr-screen').style.display = 'none';
-    document.getElementById('slideshow').style.display = 'block';
-    document.getElementById('bg-music').play();
+    document.getElementById('slideshow').style.display = 'flex';
+
+    // Safe audio play with interaction
+    music.play().catch(e => {
+      alert("Audio play failed. Click again or allow autoplay in browser.");
+    });
 
     setInterval(() => {
       current = (current + 1) % slides.length;
